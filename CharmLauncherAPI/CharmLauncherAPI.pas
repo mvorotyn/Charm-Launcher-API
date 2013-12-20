@@ -21,6 +21,7 @@ type
     ullAvailExtendedVirtual: Int64;
   end;
 
+  FJSONObject = TJSONObject;
 
   TLaunchInfo = record
     JavaPath: string[255];
@@ -45,6 +46,7 @@ type
     Function DetectRam : integer;
   public
     constructor Create(const GameDirectory: string);
+    function ParseJson(RawJsonFile: string): FJSONObject;
     function LaunchGame(LaunchInfo: TLaunchInfo): integer;
     property GameDirectory: string read FGameDirectory;
     property AvailableRAM: integer read DetectRAM;
@@ -122,6 +124,31 @@ begin
   GlobalMemoryStatusEx(MemoryInfo);
   TotalRAM := trunc (MemoryInfo.ullTotalPhys div 1024 / 1024);
   Result := TotalRAM;
+end;
+
+
+function TLauncher.ParseJson(RawJsonFile: String): FJSONObject;
+Var
+  RawJSON: TStringList;
+  ParsedObject: FJSONObject;
+begin
+  if not FileExists(RawJsonFile) then
+    raise Exception.Create('JSON file does not exist');
+
+
+  RawJSON:= TStringList.Create;
+try
+  RawJson.LoadFromFile(RawJsonFile);
+  ParsedObject:=FJSONObject.Create;
+  ParsedObject:=TJSONObject.ParseJSONValue( RawJSON.Text) as TJSONObject;
+  if Assigned(ParsedObject) then
+    Result:=ParsedObject
+  else
+    raise Exception.Create('JSON file corrupted');
+finally
+  RawJSON.Free;
+end;
+
 end;
 
 end.
