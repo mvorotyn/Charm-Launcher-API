@@ -63,6 +63,12 @@ function TLauncher.GetVersions: TStringList;
 begin
   Result:=TStringList.Create;
 
+  if (FGameDirectory = '') then
+    raise Exception.Create('Wrong Game Directory');
+
+  if FGameDirectory[length(FGameDirectory)] = '\' then
+    FGameDirectory:=Copy(FGameDirectory, 1, length(FGameDirectory)-1);
+
   if FindFirst(FGameDirectory + '\versions\' + '*', faDirectory, searchResult) = 0 then
   begin
     repeat
