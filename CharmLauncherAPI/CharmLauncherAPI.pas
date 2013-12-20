@@ -9,7 +9,7 @@ uses
 
 
 type
-    MEMORYSTATUSEX = record
+  MEMORYSTATUSEX = record
     dwLength: DWORD;
     dwMemoryLoad: DWORD;
     ullTotalPhys: Int64;
@@ -25,6 +25,16 @@ type
   TLaunchInfo = record
     JavaPath: string[255];
     Version: string[100];
+    GameLibs: string[255];
+    GarbageCollectorEnabled: Boolean;
+    MaxHeapSizeGb: string[2];
+    auth_player_name: string[255];
+    auth_uuid: string[255];
+    auth_access_token: string[255];
+    twitch_access_token: string[255];
+    assets_index_name:  string[20];
+    assets_root: string[100];
+
   end;
 
   TLauncher = class(TObject)
@@ -35,6 +45,7 @@ type
     Function DetectRam : integer;
   public
     constructor Create(const GameDirectory: string);
+    function LaunchGame(LaunchInfo: TLaunchInfo): integer;
     property GameDirectory: string read FGameDirectory;
     property AvailableRAM: integer read DetectRAM;
   published
@@ -54,6 +65,13 @@ begin
   FGameDirectory:=GameDirectory;
   SetCurrentDir(GameDirectory);
 end;
+
+
+function TLauncher.LaunchGame(LaunchInfo: TLaunchInfo): integer;
+begin
+
+end;
+
 
 
 function TLauncher.GetVersions: TStringList;
