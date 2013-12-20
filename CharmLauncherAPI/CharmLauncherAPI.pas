@@ -49,6 +49,7 @@ type
     function JsonParse(RawJsonFile: string): FJSONObject;
     function JsonExtractLibs(SourceObject: FJSONObject): string;
     function JsonExtractMainClass(SourceObject: FJSONObject): string;
+    function JsonExtractAssetIndex(SourceObject: FJSONObject): string;
     function LaunchGame(LaunchInfo: TLaunchInfo): integer;
     property GameDirectory: string read FGameDirectory;
     property AvailableRAM: integer read DetectRAM;
@@ -225,6 +226,10 @@ var
   Enum: TStringList;
   i: integer;
 begin
+  Result:='';
+  if SourceObject.Size < 1 then
+    exit;
+
   Enum:=TstringList.Create;
   for i := 0 to SourceObject.Size-1 do
     Enum.Add((SourceObject.Get(i)).JsonString.Value);
@@ -233,8 +238,28 @@ begin
   begin
     if Enum.Strings[i]='mainClass' then
       Result:=SourceObject.Get('mainClass').JsonValue.Value
-    else
-      Result:='';
+  end;
+
+end;
+
+
+function TLauncher.JsonExtractAssetIndex(SourceObject: FJSONObject): string;
+var
+  Enum: TStringList;
+  i: integer;
+begin
+  Result:='';
+  if SourceObject.Size < 1 then
+    exit;
+
+  Enum:=TstringList.Create;
+  for i := 0 to SourceObject.Size-1 do
+    Enum.Add((SourceObject.Get(i)).JsonString.Value);
+
+  for i := 0 to Enum.Count-1 do
+  begin
+    if Enum.Strings[i]='assets' then
+      Result:=SourceObject.Get('assets').JsonValue.Value
   end;
 
 end;
