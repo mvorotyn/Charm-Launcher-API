@@ -4,10 +4,24 @@ interface
 
 
 uses
-System.SysUtils, System.Classes;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
+  Vcl.Forms, Vcl.Dialogs, DBXJSON;
 
 
 type
+    MEMORYSTATUSEX = record
+    dwLength: DWORD;
+    dwMemoryLoad: DWORD;
+    ullTotalPhys: Int64;
+    ullAvailPhys: Int64;
+    ullTotalPageFile: Int64;
+    ullAvailPageFile: Int64;
+    ullTotalVirtual: Int64;
+    ullAvailVirtual: Int64;
+    ullAvailExtendedVirtual: Int64;
+  end;
+
+
   TLaunchInfo = record
     JavaPath: string[255];
     Version: string[100];
@@ -18,13 +32,14 @@ type
   private
     FGameDirectory: string;
     function GetVersions: TStringList;
+    Function DetectRam : integer;
   public
     constructor Create(const GameDirectory: string);
     property GameDirectory: string read FGameDirectory;
+    property AvailableRAM: integer read DetectRAM;
   published
     property Versions: TStringList read GetVersions;
   end;
-
 
 
 implementation
@@ -73,5 +88,16 @@ begin
 
 end;
 
+
+function TLauncher.DetectRam : integer;
+var
+  MemoryInfo : _MEMORYSTATUSEX;
+  TotalRAM : integer;
+begin
+  MemoryInfo.dwLength := SizeOf(MEMORYSTATUSEX) ;
+  GlobalMemoryStatusEx(MemoryInfo);
+  TotalRAM := trunc (MemoryInfo.ullTotalPhys div 1024 / 1024);
+  Result := TotalRAM;
+end;
 
 end.
