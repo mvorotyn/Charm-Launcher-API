@@ -46,7 +46,9 @@ type
     Function DetectRam : integer;
   public
     constructor Create(const GameDirectory: string);
-    function ParseJson(RawJsonFile: string): FJSONObject;
+    function JsonParse(RawJsonFile: string): FJSONObject;
+    function JsonExtractLibs(SourceObject: FJSONObject): string;
+    function JsonExtractMainClass(SourceObject: FJSONObject): string;
     function LaunchGame(LaunchInfo: TLaunchInfo): integer;
     property GameDirectory: string read FGameDirectory;
     property AvailableRAM: integer read DetectRAM;
@@ -127,14 +129,13 @@ begin
 end;
 
 
-function TLauncher.ParseJson(RawJsonFile: String): FJSONObject;
+function TLauncher.JsonParse(RawJsonFile: String): FJSONObject;
 Var
   RawJSON: TStringList;
   ParsedObject: FJSONObject;
 begin
   if not FileExists(RawJsonFile) then
     raise Exception.Create('JSON file does not exist');
-
 
   RawJSON:= TStringList.Create;
 try
@@ -150,5 +151,79 @@ finally
 end;
 
 end;
+
+
+function TLauncher.JsonExtractLibs(SourceObject: FJSONObject): string;
+var
+  ParsedLibraries: TStringList;
+  JsonArray: TJSONArray;
+  i, h, magic: integer;
+  current_str : string;
+  NeedtoReplaceDot, first_delimiter_allow: Boolean;
+  first_delimiter_symbol,  second_delimiter_symbol: integer ;
+  base, base_num: string;
+begin
+  ParsedLibraries:=TStringList.create;
+  JsonArray:=TJSONArray.Create;
+  JsonArray:=SourceObject.Get('libraries').JsonValue as TJsonArray;
+  for I := 0 to JsonArray.Size-1 do begin
+     ParsedLibraries.Add((JsonArray.Get(i) as TJSONObject).Get('name').JsonValue.Value);
+  end;
+
+  for I := 0 to ParsedLibraries.Count-1 do
+  begin
+    NeedtoReplaceDot:=True;
+
+    current_str:=ParsedLibraries.Strings[i];
+    for  h := 0 to Length(current_str)-1 do
+      begin
+        if NeedtoReplaceDot=True then
+          if current_str[h] = '.' then
+            current_str[h] := '\' ;
+
+
+        if current_str[h] = ':' then
+        begin
+          current_str[h] := '\';
+
+          if (first_delimiter_allow=True) then
+          begin
+            first_delimiter_symbol := h;
+            first_delimiter_allow:=False;
+          end;
+
+
+          if not (first_delimiter_symbol = h) then
+          begin
+            second_delimiter_symbol := h;
+            magic:= length(current_str) - second_delimiter_symbol;
+            base:= copy(current_str, first_delimiter_symbol + 1, length(current_str) - first_delimiter_symbol - magic - 1);
+            base_num:=copy(current_str, second_delimiter_symbol + 1, length(current_str) - second_delimiter_symbol);
+            current_str:='libraries\' + current_str + '\' + base + '-' + base_num + '.jar;';
+
+            first_delimiter_allow:=True;
+          end;
+
+          NeedtoReplaceDot:=False;
+        end;
+
+      end;
+
+    ParsedLibraries.Strings[i]:=current_str;
+  end;
+
+  Result:='';
+  for i := 0 to ParsedLibraries.Count-1 do
+  begin
+    Result:=Result + ParsedLibraries.Strings[i];
+  end;
+
+end;
+
+function TLauncher.JsonExtractMainClass(SourceObject: FJSONObject): string;
+begin
+  Result:=SourceObject.Get('mainClass').JsonValue.Value;
+end;
+
 
 end.
