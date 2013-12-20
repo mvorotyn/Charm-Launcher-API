@@ -221,9 +221,22 @@ begin
 end;
 
 function TLauncher.JsonExtractMainClass(SourceObject: FJSONObject): string;
+var
+  Enum: TStringList;
+  i: integer;
 begin
-  Result:=SourceObject.Get('mainClass').JsonValue.Value;
-end;
+  Enum:=TstringList.Create;
+  for i := 0 to SourceObject.Size-1 do
+    Enum.Add((SourceObject.Get(i)).JsonString.Value);
 
+  for i := 0 to Enum.Count-1 do
+  begin
+    if Enum.Strings[i]='mainClass' then
+      Result:=SourceObject.Get('mainClass').JsonValue.Value
+    else
+      Result:='';
+  end;
+
+end;
 
 end.
