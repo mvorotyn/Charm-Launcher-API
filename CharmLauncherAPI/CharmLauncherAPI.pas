@@ -53,6 +53,7 @@ type
     function LaunchGame(LaunchInfo: TLaunchInfo): integer;
     property GameDirectory: string read FGameDirectory;
     property AvailableRAM: integer read DetectRAM;
+    function FindJavaPath: String;
   published
     property Versions: TStringList read GetVersions;
   end;
@@ -262,6 +263,30 @@ begin
       Result:=SourceObject.Get('assets').JsonValue.Value
   end;
 
+end;
+
+function TLauncher.FindJavaPath: String;
+var
+  buff: array[0..255] of char;
+begin
+  ExpandEnvironmentStrings(PChar('%systemdrive%'),buff,SizeOf(buff));
+  if FileExists(buff + '\Program Files\Java\bin\javaw.exe') then
+    Result:=buff + '\Program Files\Java\';
+
+ if FileExists(buff + '\Program Files(x86)\Java\bin\javaw.exe') then
+   Result:=buff + '\Program Files(x86)\Java\';
+
+  if FileExists(buff + '\Program Files\Java\jre7\bin\javaw.exe') then
+    Result:=buff + '\Program Files\Java\jre7\';
+
+  if FileExists(buff + '\Program Files\Java\jre6\bin\javaw.exe') then
+    Result:=buff + '\Program Files\Java\jre6\';
+
+  if FileExists(buff + '\Program Files(x86)\Java\jre7\bin\javaw.exe') then
+    Result:=buff + '\Program Files(x86)\Java\jre7\';
+
+  if FileExists(buff + '\Program Files(x86)\Java\jre6\bin\javaw.exe') then
+    Result:=buff + '\Program Files(x86)\Java\jre6\';
 end;
 
 end.
