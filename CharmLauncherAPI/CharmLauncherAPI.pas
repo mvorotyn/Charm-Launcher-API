@@ -95,7 +95,7 @@ var
   GameJar: String;
   GameArgs: String;
 begin
-  ShowMessage('1');
+  AddLog('Launching game...');
 
   LaunchStr:='';
   if LaunchInfo.Version = ''then
