@@ -1,6 +1,8 @@
 Charm Launcher API
 ==================
 
+![](assets/Charm-Launcher-API.png)
+
 Tiny Launcher API for Minecraft written in Delphi.
 
 
