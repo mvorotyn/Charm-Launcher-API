@@ -9,4 +9,5 @@ Tiny Launcher API for Minecraft written in Delphi.
 License
 =======
 
-Charm Launcher API is under GPL3 with linking exemption. This means you can link to and use the library from any program, proprietary or open source; paid or gratis. However, you cannot modify this API and distribute it without supplying the source.
+Charm Launcher API is under GPL3 . This means you may copy, distribute and modify the software as long as you track changes/dates of in source files and keep modifications under GPL. You also can distribute your application using a GPL library commercially.
+
