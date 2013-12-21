@@ -35,7 +35,6 @@ type
     auth_access_token: string[255];
     twitch_access_token: string[255];
     assets_index_name:  string[20];
-    assets_root: string[100];
     minecraft_arguments: string[255];
 
   end;
@@ -396,7 +395,7 @@ begin
   minecraft_arguments:=ReplaceStr(minecraft_arguments, '${auth_player_name}', LaunchInfo.auth_player_name) ;
   minecraft_arguments:=ReplaceStr(minecraft_arguments, '${version_name}', LaunchInfo.Version) ;
   minecraft_arguments:=ReplaceStr(minecraft_arguments, '${game_directory}', '.\') ;
-  minecraft_arguments:=ReplaceStr(minecraft_arguments, '${game_assets}', LaunchInfo.assets_root) ;  // assets\virtual\legacy
+  minecraft_arguments:=ReplaceStr(minecraft_arguments, '${game_assets}', '.\assets\virtual\legacy') ;
 
   minecraft_arguments:=ReplaceStr(minecraft_arguments, '${auth_uuid}', LaunchInfo.auth_uuid) ;
   minecraft_arguments:=ReplaceStr(minecraft_arguments, '${auth_access_token}', LaunchInfo.auth_access_token) ;
@@ -404,7 +403,7 @@ begin
   //1.7.2+
   minecraft_arguments:=ReplaceStr(minecraft_arguments, '${user_properties}', '{"twitch_access_token":["' + LaunchInfo.twitch_access_token + '"]}') ;
   minecraft_arguments:=ReplaceStr(minecraft_arguments, '${user_type}', 'legacy') ;
-  minecraft_arguments:=ReplaceStr(minecraft_arguments, '${assets_root}', LaunchInfo.assets_root);
+  minecraft_arguments:=ReplaceStr(minecraft_arguments, '${assets_root}', '.\assets');
   minecraft_arguments:=ReplaceStr(minecraft_arguments, '${assets_index_name}', LaunchInfo.assets_index_name) ;
 
   Result:=minecraft_arguments;
