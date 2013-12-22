@@ -49,12 +49,12 @@ type
   TYggUserAuthentication = class(TObject)
   private
     Fauth_token: string;
-    const BASE_URL = 'https://authserver.mojang.com/';
-    const ROUTE_AUTHENTICATE = 'https://authserver.mojang.com/';
-    const ROUTE_REFRESH = 'https://authserver.mojang.com/';
-    const ROUTE_VALIDATE = 'https://authserver.mojang.com/';
-    const ROUTE_INVALIDATE = 'https://authserver.mojang.com/';
-    const ROUTE_SIGNOUT = 'https://authserver.mojang.com/';
+    const BASE_URL           = 'https://authserver.mojang.com/';
+    const ROUTE_AUTHENTICATE = 'https://authserver.mojang.com/authenticate';
+    const ROUTE_REFRESH      = 'https://authserver.mojang.com/refresh';
+    const ROUTE_VALIDATE     = 'https://authserver.mojang.com/validate';
+    const ROUTE_INVALIDATE   = 'https://authserver.mojang.com/invalidate';
+    const ROUTE_SIGNOUT      = 'https://authserver.mojang.com/signout';
   public
     constructor Create(const AuthInfo: TAuthInfo);
     property auth_token: string read Fauth_token;
