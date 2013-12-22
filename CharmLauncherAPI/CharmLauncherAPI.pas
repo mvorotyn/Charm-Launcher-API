@@ -23,6 +23,12 @@ type
 
   FJSONObject = TJSONObject;
 
+  TAuthInfo = record
+    Name: string[255];
+    Password: string[255];
+    Agent: string[255];
+  end;
+
   TLaunchInfo = record
     JavaPath: string[255];
     GarbageCollectorEnabled: Boolean;
@@ -38,6 +44,22 @@ type
     minecraft_arguments: string[255];
 
   end;
+
+
+  TYggUserAuthentication = class(TObject)
+  private
+    Fauth_token: string;
+    const BASE_URL = 'https://authserver.mojang.com/';
+    const ROUTE_AUTHENTICATE = 'https://authserver.mojang.com/';
+    const ROUTE_REFRESH = 'https://authserver.mojang.com/';
+    const ROUTE_VALIDATE = 'https://authserver.mojang.com/';
+    const ROUTE_INVALIDATE = 'https://authserver.mojang.com/';
+    const ROUTE_SIGNOUT = 'https://authserver.mojang.com/';
+  public
+    constructor Create(const AuthInfo: TAuthInfo);
+    property auth_token: string read Fauth_token;
+  end;
+
 
   TLauncher = class(TObject)
     Logging: Boolean;
@@ -408,6 +430,14 @@ begin
 
   Result:=minecraft_arguments;
 
+
+end;
+
+
+{ TUserAuthentication}
+
+constructor TYggUserAuthentication.Create(const AuthInfo: TAuthInfo);
+begin
 
 end;
 
