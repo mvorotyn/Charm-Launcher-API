@@ -232,11 +232,10 @@ function TLauncher.JsonExtractLibs(SourceObject: FJSONObject): string;
 var
   ParsedLibraries: TStringList;
   JsonArray: TJSONArray;
-  i, h, magic: integer;
+  i, h: integer;
   current_str : string;
-  NeedtoReplaceDot, first_delimiter_allow: Boolean;
-  first_delimiter_symbol,  second_delimiter_symbol: integer ;
-  base, base_num: string;
+  List: TStrings;
+  list_item: string;
 begin
   ParsedLibraries:=TStringList.create;
   JsonArray:=TJSONArray.Create;
@@ -245,47 +244,33 @@ begin
      ParsedLibraries.Add((JsonArray.Get(i) as TJSONObject).Get('name').JsonValue.Value);
   end;
 
-  for I := 0 to ParsedLibraries.Count-1 do
+  for i := 0 to ParsedLibraries.Count-1 do
   begin
-    NeedtoReplaceDot:=True;
 
-    current_str:=ParsedLibraries.Strings[i];
-    for  h := 0 to Length(current_str)-1 do
+    List := TStringList.Create;
+    try
+      ExtractStrings([':'], [], PChar(ParsedLibraries.Strings[i]), List);
+
+
+      list_item:=List[0];
+      for  h := 0 to Length(list_item)-1 do
       begin
-        if NeedtoReplaceDot=True then
-          if current_str[h] = '.' then
-            current_str[h] := '\' ;
 
-
-        if current_str[h] = ':' then
-        begin
-          current_str[h] := '\';
-
-          if (first_delimiter_allow=True) then
-          begin
-            first_delimiter_symbol := h;
-            first_delimiter_allow:=False;
-          end;
-
-
-          if not (first_delimiter_symbol = h) then
-          begin
-            second_delimiter_symbol := h;
-            magic:= length(current_str) - second_delimiter_symbol;
-            base:= copy(current_str, first_delimiter_symbol + 1, length(current_str) - first_delimiter_symbol - magic - 1);
-            base_num:=copy(current_str, second_delimiter_symbol + 1, length(current_str) - second_delimiter_symbol);
-            current_str:='libraries\' + current_str + '\' + base + '-' + base_num + '.jar;';
-
-            first_delimiter_allow:=True;
-          end;
-
-          NeedtoReplaceDot:=False;
-        end;
-
+        if List_item[h] = '.' then
+            List_item[h] := '\' ;
       end;
+      List[0]:=list_item;
 
-    ParsedLibraries.Strings[i]:=current_str;
+      current_str:='libraries\' + List[0] +    '\' + List[1] + '\' + List[2] + '\' + List[1] + '-' + List[2] + '.jar;';
+      ParsedLibraries.Strings[i]:=current_str;
+
+    finally
+      List.Free;
+    end;
+
+
   end;
+
 
   Result:='';
   for i := 0 to ParsedLibraries.Count-1 do
